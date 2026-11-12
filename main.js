@@ -452,11 +452,20 @@ function parseBlock(src) {
 }
 
 /* 给定目标类型，算出一行新的 markdown。
-   content 保留原文正文，indent 保留缩进。 */
+   content 保留原文正文，indent 保留缩进。
+   例外：按 CommonMark，标题/引用/callout/围栏代码块最多允许 3 个空格
+   的缩进，正文段落缩进 4 格以上会退化成「缩进代码块」——表现为
+   点了按钮、文件里多了符号，页面却没变化。这些类型遇到过深缩进
+   （>3 空格或含 Tab）时把缩进拍平；列表类（ul/ol/task）允许任意
+   缩进（嵌套列表），原样保留。 */
 function makeBlockLine(src, kind, calloutType) {
   const info = parseBlock(src);
   const content = info.content;
-  const pad = info.indent;
+  let pad = info.indent;
+  if (kind !== "ul" && kind !== "ol" && kind !== "task" &&
+      (pad.length > 3 || pad.indexOf("\t") !== -1)) {
+    pad = "";
+  }
 
   switch (kind) {
     case "p": return pad + content;

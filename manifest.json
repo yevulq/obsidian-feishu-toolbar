@@ -1,7 +1,7 @@
 {
   "id": "feishu-toolbar",
   "name": "FlyText 飞书式工具栏",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "minAppVersion": "1.5.0",
   "description": "飞书式工具栏：选中文字弹出格式栏（加粗、字色、底色、批注），行首悬停出现块类型按钮（标题、列表、引用、8 种高亮块）。不破坏链接，文件仍是纯 Markdown。",
   "author": "叶逐流",

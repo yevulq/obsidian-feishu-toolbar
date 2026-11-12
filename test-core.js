@@ -145,6 +145,16 @@ console.log("\n十、块类型改写");
   eq("引用 → 正文", makeBlockLine("> 一句话", "p"), "一句话");
   eq("保留缩进", makeBlockLine("  - 一条", "h3"), "  ### 一条");
   eq("空行 → 标题", makeBlockLine("", "h1"), "# ");
+  /* 深缩进（>3 空格或含 Tab）会把标题/引用/callout/代码块/正文
+     变成 CommonMark 的缩进代码块，页面「切了没反应」——拍平 */
+  eq("深缩进 → 标题拍平", makeBlockLine("    一句话", "h2"), "## 一句话");
+  eq("深缩进 → callout 拍平", makeBlockLine("    一句话", "callout", "note"), "> [!note] 一句话");
+  eq("深缩进 → 引用拍平", makeBlockLine("    一句话", "quote"), "> 一句话");
+  eq("深缩进 → 正文拍平", makeBlockLine("    ## 一句话", "p"), "一句话");
+  eq("Tab 缩进 → 标题拍平", makeBlockLine("\t一句话", "h1"), "# 一句话");
+  eq("浅缩进 → 标题保留", makeBlockLine("   一句话", "h3"), "   ### 一句话");
+  eq("深缩进 → 列表保留", makeBlockLine("    一句话", "ul"), "    - 一句话");
+  eq("深缩进 → 任务保留", makeBlockLine("      一句话", "task"), "      - [ ] 一句话");
 }
 
 console.log("\n十一、围栏代码块");
