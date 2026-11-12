@@ -6,3 +6,4 @@ dist/
 *.png
 .DS_Store
 Thumbs.db
+!images/*.png
