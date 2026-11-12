@@ -1,4 +1,8 @@
 node_modules/
 *.log
+*.bak
+.vscode/
+dist/
+*.png
 .DS_Store
 Thumbs.db

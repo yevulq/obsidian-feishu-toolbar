@@ -1,9 +1,9 @@
 {
   "id": "feishu-toolbar",
   "name": "FlyText 飞书式工具栏",
-  "version": "1.1.0",
-  "minAppVersion": "1.4.0",
-  "description": "选中文字就地弹出面板：加粗、斜体、下划线、删除线、字色、底色、清除。样式存成类名不写死色值，改一次 CSS 全库生效；支持高亮里加粗、跨样式和跨行选择。",
-  "author": "yevulq",
-  "isDesktopOnly": false
+  "version": "2.0.0",
+  "minAppVersion": "1.5.0",
+  "description": "选中文字弹出飞书式格式栏；行首悬停出现块类型按钮，可直接改标题、列表、引用、高亮块。只改背景不改字色，不破坏链接。",
+  "author": "青仪兮",
+  "isDesktopOnly": true
 }

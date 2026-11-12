@@ -1,22 +1,16 @@
 /* ============================================================
-   FlyText 飞书式工具栏 · v1.1
+   FlyText v2 · 样式
    ------------------------------------------------------------
-   这个文件包含两部分：
-   ① 浮动面板的外观
-   ② 工具栏写进正文的那套类名（hl-* / tc-* / fw-b …）的基础长相
-
-   ② 存在的原因：插件不能假设用户装了某个 CSS snippet。
-   把所有样式打进来，装到任何库里点一下就有颜色。
-   想改深浅，在自己库的 snippet 里重定义同名变量即可——
-   snippet 在插件之后加载，会覆盖这里的默认值。
+   ① 行内样式类（hl-* / tc-* / fw-b …）
+   ② 行首 gutter 小方块（飞书式，六个点）
+   ③ 块类型菜单
+   ④ 行内格式面板
+   ⑤ 高亮块（callout）的飞书式边框
    ============================================================ */
 
-/* ---------------- ① 色板：只给默认值，不定义变量 ----------------
-   这里刻意不写 `body { --hl-y: ... }`。一旦写死，插件样式表会盖掉
-   用户 snippet 里的同名变量。改成 var() 的兜底值：
-   用户定义了就用用户的，没定义才用这里的默认色。 */
+/* ---------------- ① 行内样式 ---------------- */
 
-/* 深色主题的兜底色：用户 snippet 里定义了变量就不走这里 */
+/* 深色主题兜底 */
 .theme-dark .hl-y { background-color: var(--hl-y, rgba(255, 225, 120, 0.24)); }
 .theme-dark .hl-g { background-color: var(--hl-g, rgba(140, 150, 255, 0.22)); }
 .theme-dark .hl-b { background-color: var(--hl-b, rgba(110, 180, 250, 0.22)); }
@@ -24,12 +18,10 @@
 .theme-dark .hl-o { background-color: var(--hl-o, rgba(175, 155, 240, 0.21)); }
 .theme-dark .hl-c { background-color: var(--hl-c, rgba(130, 175, 255, 0.24)); }
 .theme-dark .hl-r { background-color: var(--hl-r, rgba(255, 130, 125, 0.21)); }
+.theme-dark .hl-m { background-color: var(--hl-m, rgba(110, 220, 150, 0.20)); }
 
-/* ---------------- ② 行内样式类 ---------------- */
-
-/* 底色：统一的圆角、内边距，跨行断开也不难看 */
-.hl-y, .hl-g, .hl-b, .hl-n, .hl-o, .hl-c, .hl-r {
-  padding: 0.05em 0.24em;
+.hl-y, .hl-g, .hl-b, .hl-n, .hl-o, .hl-c, .hl-r, .hl-m {
+  padding: 0.04em 0.22em;
   border-radius: 3px;
   color: inherit;
   -webkit-box-decoration-break: clone;
@@ -43,23 +35,17 @@
 .hl-o { background-color: var(--hl-o, #dcd5f4); }
 .hl-c { background-color: var(--hl-c, #c6dbf9); }
 .hl-r { background-color: var(--hl-r, #f9cdc7); }
+.hl-m { background-color: var(--hl-m, #d6f0dc); }
 
-/* 主题句：底色 + 左侧细线 */
-.hl-g {
-  border-left: 3px solid #b7c4ef;
-  padding-left: 0.35em;
-}
-
-/* 字色 */
 .tc-key { color: var(--c-key, #4a73e0); font-weight: 600; }
-.tc-ref { color: var(--c-ref, #7e9ae0); font-weight: 400; }
-.tc-ok { color: var(--c-ok, #5977cc); font-weight: 400; }
-.tc-num { color: var(--c-num, #c87a30); font-weight: 400; font-variant-numeric: tabular-nums; }
-.tc-hot { color: var(--c-hot, #d25550); font-weight: 400; }
-.tc-aside { color: var(--c-aside, #9c8ac4); font-weight: 400; }
-.tc-gray { color: var(--text-faint); font-weight: 400; }
+.tc-ref { color: var(--c-ref, #7e9ae0); }
+.tc-ok { color: var(--c-ok, #5977cc); }
+.tc-num { color: var(--c-num, #c87a30); font-variant-numeric: tabular-nums; }
+.tc-hot { color: var(--c-hot, #d25550); }
+.tc-aside { color: var(--c-aside, #9c8ac4); }
+.tc-gray { color: var(--text-faint); }
+.tc-m { color: var(--c-m, #2f7d4f); }
 
-/* 字重与字形 */
 .fw-b { font-weight: 650; }
 .it { font-style: italic; }
 .ul { text-decoration: underline; }
@@ -73,13 +59,194 @@
   padding: 0 3px;
 }
 
-/* 有些主题会强制重置 span 里的字重，这里兜一层 */
 .markdown-rendered .fw-b,
-.markdown-source-view .fw-b {
-  font-weight: 650;
+.markdown-source-view .fw-b { font-weight: 650; }
+
+/* ---------------- ② 行首 gutter ---------------- */
+
+/* 插在行号 gutter 的左边。CM6 的 gutters 是 flex 容器，order 负值置左。 */
+.cm-gutters { display: flex; flex-direction: row; }
+.ft-block-gutter {
+  order: -1;
+  min-width: 34px;
+  padding-right: 2px;
 }
 
-/* ---------------- ③ 浮动面板 ---------------- */
+.ft-block-gutter .cm-gutterElement {
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-start;
+  padding-left: 2px;
+  padding-top: 5px;
+  box-sizing: border-box;
+  min-height: 1.5em !important;
+}
+.ft-block-gutter .cm-gutterElement:hover { opacity: 1; }
+
+.ft-gutter-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  width: 31px;
+  height: 20px;
+  padding: 0 4px;
+  border: 1px solid var(--background-modifier-border, #e3e5e8);
+  border-radius: 4px;
+  background: var(--background-primary, #fff);
+  color: var(--text-muted, #646a73);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.ft-gutter-pill:hover {
+  border-color: var(--text-faint, #9aa0a6);
+  background: var(--background-modifier-hover, #f2f3f5);
+  color: var(--text-normal, #1f2329);
+}
+.ft-gutter-pill.is-block {
+  background: var(--ft-pill-bg, #eef3ff);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.ft-gutter-icon {
+  /* 用户明确要求「都别加粗」：旧版 650 让左侧结构图标比右侧六个点重，
+     视觉不一致。六点本来就没有 font-weight，这里统一回 400。 */
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: -0.02em;
+  flex: 1 1 auto;
+  text-align: center;
+  overflow: hidden;
+}
+
+.ft-gutter-dots {
+  display: grid;
+  grid-template-columns: repeat(2, 2px);
+  grid-template-rows: repeat(3, 2px);
+  gap: 1px;
+  flex: 0 0 5px;
+  opacity: 0.5;
+}
+.ft-gutter-dots i {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ---------------- ③ 块类型菜单 ---------------- */
+
+.ft-block-menu {
+  position: fixed;
+  z-index: 10000;
+  display: none;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 238px;
+  padding: 6px;
+  background: var(--background-primary, #fff);
+  border: 1px solid var(--background-modifier-border, #e3e5e8);
+  border-radius: 9px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14), 0 1px 3px rgba(0, 0, 0, 0.06);
+  user-select: none;
+  font-size: 12px;
+}
+.ft-block-menu.is-open { display: flex; }
+
+.ft-block-title {
+  font-size: 10px;
+  color: var(--text-faint, #9aa0a6);
+  padding: 5px 6px 2px;
+  letter-spacing: 0.04em;
+}
+
+.ft-block-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 3px;
+}
+
+.ft-block-sep {
+  height: 1px;
+  margin: 5px 4px;
+  background: var(--background-modifier-border, #e3e5e8);
+}
+
+.ft-block-btn {
+  position: relative;
+  min-width: 30px;
+  height: 27px;
+  padding: 0 5px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-normal, #1f2329);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ft-block-btn:hover {
+  background: var(--background-modifier-hover, #f2f3f5);
+  border-color: var(--background-modifier-border, #e3e5e8);
+}
+.ft-block-btn.is-on {
+  background: var(--interactive-accent, #4a73e0);
+  color: #fff;
+  border-color: transparent;
+}
+
+.ft-block-dot {
+  position: relative;
+  width: 23px;
+  height: 23px;
+  padding: 0;
+  border: 1px solid var(--ft-dot-br, #ddd) !important;
+  border-radius: 5px;
+  background-color: var(--ft-dot-bg, #eee) !important;
+  cursor: pointer;
+}
+.ft-block-dot:hover { transform: scale(1.08); }
+.ft-block-dot.is-on {
+  outline: 2px solid var(--interactive-accent, #4a73e0);
+  outline-offset: 1px;
+}
+
+/* 悬停说明：跟着按钮走，不依赖系统 title 的 1 秒延迟 */
+.ft-block-btn[data-tip]::after,
+.ft-block-dot[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: rgba(28, 31, 35, 0.92);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 400;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s ease 0.15s;
+  z-index: 2;
+}
+.ft-block-btn[data-tip]:hover::after,
+.ft-block-dot[data-tip]:hover::after { opacity: 1; }
+
+/* ---------------- ④ 行内格式面板 ---------------- */
 
 .flytext-bar {
   position: fixed;
@@ -87,47 +254,37 @@
   display: none;
   flex-direction: column;
   gap: 2px;
-  padding: 8px 10px;
-  min-width: 232px;
+  padding: 7px 9px;
+  min-width: 236px;
   background: var(--background-primary, #fff);
   border: 1px solid var(--background-modifier-border, #e3e5e8);
-  border-radius: 10px;
+  border-radius: 9px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.13), 0 1px 3px rgba(0, 0, 0, 0.07);
   user-select: none;
   font-size: 13px;
 }
-
-.flytext-bar.is-open {
-  display: flex;
-  animation: ftb-in 0.12s ease-out;
-}
+.flytext-bar.is-open { display: flex; animation: ftb-in 0.12s ease-out; }
 
 @keyframes ftb-in {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.ftb-row {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  height: 28px;
-}
+.ftb-row { display: flex; align-items: center; gap: 2px; height: 27px; }
 
 .ftb-label {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-faint, #9aa0a6);
-  width: 30px;
-  flex: 0 0 30px;
-  letter-spacing: 0.05em;
-  user-select: none;
+  width: 28px;
+  flex: 0 0 28px;
+  letter-spacing: 0.04em;
 }
 
 .ftb-btn {
-  height: 26px;
-  min-width: 28px;
+  height: 25px;
+  min-width: 27px;
   padding: 0 5px;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 5px;
   background: transparent;
   color: var(--text-normal, #1f2329);
@@ -136,33 +293,24 @@
   cursor: pointer;
   font-family: inherit;
 }
-
 .ftb-btn:hover {
   background: var(--background-modifier-hover, #f2f3f5);
+  border-color: var(--background-modifier-border, #e3e5e8);
 }
-
 .ftb-btn.is-on {
-  background: #e1eaff;
-  color: #1e5fd9;
+  background: var(--interactive-accent, #4a73e0);
+  color: #fff;
 }
-
 .ftb-btn.ftb-wide {
   min-width: 40px;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted, #646a73);
 }
 
-.ftb-sep {
-  width: 1px;
-  height: 16px;
-  margin: 0 4px;
-  background: var(--background-modifier-border, #e3e5e8);
-  flex: 0 0 1px;
-}
-
 .ftb-dot {
-  width: 22px;
-  height: 22px;
+  width: 21px;
+  height: 21px;
+  min-width: 21px;
   padding: 0;
   border: 1px solid var(--background-modifier-border, #e3e5e8);
   border-radius: 5px;
@@ -171,36 +319,181 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   font-family: inherit;
 }
-
-.ftb-dot:hover {
-  transform: scale(1.1);
-  border-color: var(--text-faint, #9aa0a6);
-}
-
-.ftb-dot-text {
-  background: var(--background-primary, #fff);
-}
+.ftb-dot:hover { transform: scale(1.1); border-color: var(--text-faint, #9aa0a6); }
+.ftb-dot-text { background: var(--background-primary, #fff); }
 
 .ftb-dot-none {
   position: relative;
-  background: repeating-linear-gradient(
-    45deg,
-    #f4f5f7,
-    #f4f5f7 3px,
-    #fff 3px,
-    #fff 6px
-  );
+  background: repeating-linear-gradient(45deg, #f4f5f7, #f4f5f7 3px, #fff 3px, #fff 6px);
 }
-
 .ftb-dot-none::after {
   content: "";
   position: absolute;
-  width: 16px;
+  width: 15px;
   height: 1px;
   background: #d9534f;
   transform: rotate(-45deg);
 }
+
+/* ---------------- ⑤ 高亮块：飞书式 1px 同色系边框 ----------------
+   飞书的高亮块是「浅底 + 1px 深一档边框 + 圆角」，
+   不是 Obsidian 默认的「4px 左侧粗边」。 */
+
+.callout[data-callout="success"] { --ft-callout-bg: #dae6fc; --ft-callout-br: #b9cdf3; }
+.callout[data-callout="important"] { --ft-callout-bg: #e7e3f8; --ft-callout-br: #d3caf0; }
+.callout[data-callout="question"] { --ft-callout-bg: #e4e7fd; --ft-callout-br: #ccd3f7; }
+.callout[data-callout="quote"] { --ft-callout-bg: #f1ecfb; --ft-callout-br: #ddd3f3; }
+.callout[data-callout="todo"] { --ft-callout-bg: #fff7c2; --ft-callout-br: #f0dfae; }
+.callout[data-callout="example"] { --ft-callout-bg: #fff2cc; --ft-callout-br: #ecd7a0; }
+.callout[data-callout="warning"] { --ft-callout-bg: #fcdfdc; --ft-callout-br: #f2c3bd; }
+.callout[data-callout="note"] { --ft-callout-bg: #f2f3f5; --ft-callout-br: #dcdfe3; }
+
+.markdown-rendered .callout,
+.markdown-source-view .callout {
+  background-color: var(--ft-callout-bg, rgba(var(--callout-color), 0.1)) !important;
+  border: 1px solid var(--ft-callout-br, rgba(var(--callout-color), 0.3)) !important;
+  border-left: 1px solid var(--ft-callout-br, rgba(var(--callout-color), 0.3)) !important;
+  border-radius: 7px !important;
+  padding: 10px 14px !important;
+  mix-blend-mode: normal;
+}
+
+/* 块里文字保持正文色。用户明确要求：改块只改背景，不改字色。 */
+.markdown-rendered .callout .callout-title,
+.markdown-source-view .callout .callout-title,
+.markdown-rendered .callout .callout-content,
+.markdown-source-view .callout .callout-content {
+  color: var(--text-normal, #1f2329);
+}
+
+/* 块内文字默认正常字重（第二轮：修「清除/取消加粗看不出变化」）
+   callout 的第一行是「标题」，Obsidian 默认给 600+ 的字重；旧版只压了
+   .callout-title-inner，正文 .callout-content 仍继承主题字重。结果用户
+   把 <span class="fw-b"> 清掉后，字还是继承来的粗体，看起来像「没生效」。
+   这里给标题和正文都压回 400；下面 .callout .fw-b 的 700 !important
+   保留，所以真正加粗时对比依然明显。 */
+.callout .callout-title-inner,
+.markdown-rendered .callout .callout-content,
+.markdown-source-view .callout .callout-content { font-weight: 400; }
+.callout .callout-icon { opacity: 0.9; }
+
+/* 块里的加粗必须真的变粗：主题可能给 callout 内容设了固定字重 */
+.callout .fw-b,
+.callout .callout-content .fw-b { font-weight: 700 !important; }
+
+/* 折叠 callout 的悬浮按钮：挂在 body 上，fixed 定位，避开 contain:paint 裁剪 */
+.ft-floating-callout {
+  position: fixed;
+  z-index: 10001;
+  pointer-events: none; /* 纯视觉提示，点击由 gutter 区域委托处理 */
+  display: none !important;
+  opacity: 1;
+  margin: 0;
+}
+.ft-floating-callout.is-show { display: inline-flex !important; }
+
+/* 行号锚点按钮层：每个可见行号一个按钮，位置由行号元素算出来 */
+.ft-nav-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+}
+.ft-nav-btn {
+  position: absolute;
+  display: none;
+  pointer-events: auto;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+.ft-nav-btn.is-show { opacity: 1; }
+.ft-nav-btn.is-block { background: var(--ft-pill-bg, #eef3ff); }
+
+/* 块按钮放大到飞书的量级：38x26，图标 12px，六点 2.5px */
+.ft-nav-btn {
+  width: 38px;
+  height: 26px;
+  padding: 0 5px;
+  border-radius: 6px;
+}
+.ft-nav-btn .ft-gutter-icon {
+  font-size: 12px;
+}
+.ft-nav-btn .ft-gutter-dots {
+  flex: 0 0 7px;
+  gap: 1px;
+}
+.ft-nav-btn .ft-gutter-dots i {
+  width: 2.5px;
+  height: 2.5px;
+}
+
+/* ---------------- ⑥ 批注：正文小标记 + 侧边卡片 ----------------
+   全部用 .ft- 前缀，不覆盖主题或其它插件的选择器。
+   正文里只有一段淡黄底+下划线的小标记，批注详情在卡片里，
+   既不显示在正文，也不需要跳到文末。 */
+.ft-cmt {
+  background-color: rgba(255, 198, 60, 0.28);
+  border-bottom: 2px solid #dfa726;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.ft-comment-card {
+  position: fixed;
+  z-index: 10012;
+  width: 320px;
+  box-sizing: border-box;
+  padding: 12px;
+  background: var(--background-primary, #fff);
+  color: var(--text-normal, #1f2329);
+  border: 1px solid var(--background-modifier-border, #ddd);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+}
+.ft-comment-card .ft-cmt-quote {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted, #777);
+  border-left: 3px solid #dfa726;
+  padding-left: 8px;
+  margin-bottom: 8px;
+  max-height: 54px;
+  overflow: hidden;
+}
+.ft-comment-card textarea {
+  width: 100%;
+  min-height: 84px;
+  box-sizing: border-box;
+  resize: vertical;
+  font-size: 13px;
+  padding: 6px 8px;
+  border: 1px solid var(--background-modifier-border, #ddd);
+  border-radius: 6px;
+  background: var(--background-primary, #fff);
+  color: var(--text-normal, #1f2329);
+}
+.ft-comment-card .ft-cmt-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+.ft-comment-card .ft-cmt-actions button {
+  font-size: 12px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+/* 有序列表用的是 SVG（1/2/3 + 三条横线），需要和字符图标一样的居中方式。
+   只加类名，不改 pill 尺寸，避免影响 syncNav 靠 rect 高度做的去重判定。 */
+.ft-gutter-icon.is-svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ft-gutter-icon.is-svg svg { width: 13px; height: 13px; flex: none; }
